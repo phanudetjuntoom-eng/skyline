@@ -509,7 +509,106 @@
     document.getElementById('copy-phan-2569').addEventListener('click', ()=> copyYear(2026,'phan-686970','พาน 2569'));
     document.getElementById('copy-phan-2570').addEventListener('click', ()=> copyYear(2027,'phan-686970','พาน 2570'));
   })();
+</script><!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Probation Scheduler | เขต 2 (v27 merged)</title>
+  <meta name="theme-color" content="#0d3c91"/>
+  <link rel="icon" type="image/png" href="probation-logo.png">
+  <style>
+    :root{
+      --bg:#f5f8ff; --panel:#ffffff; --ink:#0b2a5a; --muted:#5b6b86; --line:#d7e0f2;
+      --blue:#174ea6; --blue-2:#0d3c91; --shadow:0 10px 25px rgba(13,60,145,.09);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;background:var(--bg);color:var(--ink);font:15.5px/1.6 Inter,ui-sans-serif,system-ui,"Noto Sans Thai",sans-serif}
+    .app{display:grid;grid-template-columns:260px 1fr;min-height:100dvh}
+    @media(max-width:960px){.app{grid-template-columns:0 1fr}.side{position:fixed;z-index:40;inset:0 30% 0 0;transform:translateX(-100%);transition:.25s}.side.open{transform:none}.side-mask{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none}.side.open + .main .side-mask{display:block}}
+    .side{background:linear-gradient(180deg,#103a8a,#0d3c91);color:#ecf2ff;box-shadow:var(--shadow)}
+    .brand{display:flex;align-items:center;gap:10px;padding:16px 18px;border-bottom:1px solid rgba(255,255,255,.12)}
+    .brand img{width:46px;height:46px;border-radius:10px}
+    .main{display:grid;grid-template-rows:auto 1fr}
+    .top{background:var(--panel);padding:10px 16px;box-shadow:var(--shadow)}
+    .content{padding:18px}
+    /* FAB */
+    .quickview-fab{position:fixed;right:20px;bottom:24px;z-index:60;padding:12px 16px;border-radius:999px;background:#174ea6;color:#fff;cursor:pointer}
+    .quickview-panel{position:fixed;right:20px;bottom:88px;z-index:59;width:min(460px,92vw);background:#fff;border:1px solid #e7eef8;border-radius:16px;box-shadow:0 20px 40px rgba(12,46,96,.18);padding:14px;display:none}
+    .quickview-panel.open{display:block}
+    .quickview-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .qv-chip{padding:10px;border:1px solid #e6eef8;border-radius:12px;background:#f9fbff;cursor:pointer}
+    dialog{border:0;border-radius:14px;box-shadow:0 30px 60px rgba(2,28,68,.25)}
+    .modal-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .month-grid{display:grid;grid-template-columns:repeat(2,minmax(160px,1fr));gap:8px}
+    .pill{display:flex;justify-content:space-between;background:#f7fbff;border:1px solid #e6eef8;padding:8px 10px;border-radius:10px}
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="side" id="sidebar">
+    <div class="brand"><img src="probation-logo-green.png" alt="logo"><div>คุมประพฤติ เขต 2</div></div>
+  </aside>
+  <section class="main">
+    <header class="top"><h1>Website คำนวนวันรายงานตัว (เขต 2)</h1></header>
+    <div class="content">...</div>
+  </section>
+</div>
+
+<!-- Floating Quick View -->
+<button class="quickview-fab" id="qv-fab">ดูวันรายเดือน</button>
+<div class="quickview-panel" id="qv-panel">
+  <div style="display:flex;justify-content:space-between"><h4>เลือกอำเภอ</h4><button id="qv-close">ปิด</button></div>
+  <div class="quickview-grid">
+    <button class="qv-chip" data-area="wiangchai-686970" data-title="เวียงชัย">เวียงชัย ปี 69–70</button>
+    <button class="qv-chip" data-area="phan-686970" data-title="พาน">พาน ปี 69–70</button>
+    <button class="qv-chip" data-area="wiangpapao-686970" data-title="เวียงป่าเป้า">เวียงป่าเป้า ปี 69–70</button>
+    <button class="qv-chip" data-area="watpangae-686970" data-title="วัดป่าแงะ">วัดป่าแงะ ปี 69–70</button>
+    <button class="qv-chip" data-area="maesuai-686970" data-title="แม่สรวย">แม่สรวย ปี 69–70</button>
+    <button class="qv-chip" data-area="maelao-686970" data-title="แม่ลาว">แม่ลาว ปี 69–70</button>
+    <button class="qv-chip" data-area="wiangchiangrung-686970" data-title="เวียงเชียงรุ้ง/ดอยหลวง">เวียงเชียงรุ้ง/ดอยหลวง ปี 69–70</button>
+  </div>
+</div>
+
+<!-- Generic Modal -->
+<dialog id="modal-area">
+  <div class="modal-head">
+    <strong id="area-title">วันรายเดือน</strong>
+    <div style="margin-left:auto;display:flex;gap:6px">
+      <button id="btn-y-2569" data-year="2026">ปี 2569</button>
+      <button id="btn-y-2570" data-year="2027">ปี 2570</button>
+    </div>
+    <button id="area-close">ปิด</button>
+  </div>
+  <div class="month-grid" id="area-grid"></div>
+  <div><button id="btn-copy-area">คัดลอกข้อความ</button></div>
+</dialog>
+
+<script>
+  const presets = {
+    "wiangchai-686970": {years:{2026:[26,23,30,27,25,29,27,31,28,22,23,28],2027:[25,23,22,26,25,21,26,23,27,26,22,27]}},
+    "phan-686970": {years:{2026:[22,19,19,23,21,18,16,20,17,15,20,17],2027:[21,18,22,20,17,22,19,23,21,18,23,23]}},
+    "wiangpapao-686970": {years:{2026:[8,12,12,9,14,11,9,13,10,8,12,9],2027:[14,11,11,8,13,10,15,13,16,14,11,16]}},
+    "watpangae-686970": {years:{2026:[29,26,26,24,28,25,23,27,24,26,26,24],2027:[28,25,25,29,27,24,29,26,30,28,25,30]}},
+    "maesuai-686970": {years:{2026:[20,17,17,21,19,16,14,18,15,13,17,15],2027:[19,16,16,20,18,15,20,17,21,19,16,21]}},
+    "maelao-686970": {years:{2026:[13,10,10,8,12,9,7,11,8,6,10,8],2027:[12,9,9,7,11,8,13,10,14,12,9,14]}},
+    "wiangchiangrung-686970": {years:{2026:[13,10,17,21,13,16,21,18,15,20,11,15],2027:[18,15,15,19,17,14,19,16,20,18,15,20]}}
+  };
+
+  const fab=document.getElementById('qv-fab'), panel=document.getElementById('qv-panel'), close=document.getElementById('qv-close');
+  fab.addEventListener('click',()=>panel.classList.toggle('open')); close.addEventListener('click',()=>panel.classList.remove('open'));
+
+  const modal=document.getElementById('modal-area'), areaTitleEl=document.getElementById('area-title'), areaGrid=document.getElementById('area-grid');
+  let currentKey='', currentTitle='', currentYear=2026;
+  function renderArea(year){ const arr=(presets[currentKey].years||{})[year]; areaGrid.innerHTML=''; if(!arr){areaGrid.innerHTML='<div>ไม่มีข้อมูล</div>';return;} const months=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม']; months.forEach((m,i)=>{const d=document.createElement('div');d.className='pill';d.innerHTML=`<span>${i+1}. ${m}</span><strong>${arr[i]}</strong>`;areaGrid.appendChild(d);});}
+  document.querySelectorAll('.qv-chip').forEach(ch=>{ch.addEventListener('click',()=>{panel.classList.remove('open');currentKey=ch.dataset.area;currentTitle=ch.dataset.title;areaTitleEl.textContent='วันรายเดือน '+currentTitle;currentYear=2026;renderArea(currentYear);modal.showModal();});});
+  document.getElementById('btn-y-2569').addEventListener('click',()=>{currentYear=2026;renderArea(currentYear);});
+  document.getElementById('btn-y-2570').addEventListener('click',()=>{currentYear=2027;renderArea(currentYear);});
+  document.getElementById('area-close').addEventListener('click',()=>modal.close());
+  document.getElementById('btn-copy-area').addEventListener('click',()=>{const arr=(presets[currentKey].years||{})[currentYear]||[];const short=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];const txt=short.map((m,i)=>`${m} ${arr[i]||'-'}`).join(', ');navigator.clipboard.writeText(currentTitle+' '+(currentYear+543)+': '+txt).then(()=>alert('คัดลอกแล้ว'));});
 </script>
+
+
 
 </body>
 </html>
