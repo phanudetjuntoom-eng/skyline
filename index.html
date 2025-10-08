@@ -1,274 +1,520 @@
-<!DOCTYPE html>
+# Write the updated HTML (based on user's provided code) to a new file
+html = r"""<!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Probation Scheduler | เขต 2 (v28)</title>
-<meta name="theme-color" content="#0d3c91"/>
-<link rel="icon" href="probation-logo.png" />
-<style>
-  /* ………… สไตล์เดิมของหน้า (ตัดออกเพื่อย่อ) ………… */
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Probation Scheduler | เขต 2 (v27+fab)</title>
+  <meta name="theme-color" content="#0d3c91"/>
+  <link rel="icon" type="image/png" href="probation-logo.png">
+  <style>
+    :root{
+      --bg:#f5f8ff; --panel:#ffffff; --ink:#0b2a5a; --muted:#5b6b86; --line:#d7e0f2;
+      --blue:#174ea6; --blue-2:#0d3c91; --shadow:0 10px 25px rgba(13,60,145,.09);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;background:var(--bg);color:var(--ink);font:15.5px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Thai", sans-serif}
+    .app{display:grid;grid-template-columns:260px 1fr;min-height:100dvh}
+    @media(max-width:960px){.app{grid-template-columns:0 1fr}.side{position:fixed;z-index:40;inset:0 30% 0 0;transform:translateX(-100%);transition:.25s}.side.open{transform:none}.side-mask{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none}.side.open + .main .side-mask{display:block}}
+    .side{background:linear-gradient(180deg,#103a8a,#0d3c91); color:#ecf2ff; box-shadow:var(--shadow)}
+    .brand{display:flex;align-items:center;gap:10px;padding:16px 18px;border-bottom:1px solid rgba(255,255,255,.12)}
+    .brand img{width:46px;height:46px;border-radius:10px;box-shadow:0 6px 20px rgba(13,60,145,.35);border:3px solid #f8fbff;outline:2px solid #0b2a5a;background:#0d3c91;object-fit:contain}
+    .nav{padding:10px}
+    .nav a{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;color:#eaf2ff;text-decoration:none}
+    .nav a:hover{background:rgba(255,255,255,.08)}
+    .nav .head{margin:8px 12px 6px;color:#cbd8ff;font-size:12px;letter-spacing:.5px;text-transform:uppercase}
+    .main{display:grid;grid-template-rows:auto 1fr}
+    .top{background:var(--panel);box-shadow:var(--shadow);display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30}
+    .hamb{display:none}
+    @media(max-width:960px){.hamb{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:#fff;margin-right:8px}}
+    .actions{display:flex;gap:8px;flex-wrap:wrap}
+    .btn{border:1px solid var(--line);background:linear-gradient(180deg,#ffffff,#f2f6ff);color:var(--ink);padding:10px 12px;border-radius:12px;cursor:pointer;transition:.2s;box-shadow:0 1px 3px rgba(13,60,145,.06)}
+    .btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(13,60,145,.15)}
+    .btn.primary{background:linear-gradient(180deg,#1d5ac4,#134aa4);color:#fff;border-color:#134aa4}
+    .content{padding:18px;display:grid;gap:18px}
+    .grid{display:grid;gap:16px}
+    @media(min-width:1000px){.grid{grid-template-columns:1.1fr .9fr}}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:16px}
+    label span{display:block;color:var(--muted);font-size:12px;margin-bottom:6px}
+    input,select{width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);background:#fff;color:var(--ink)}
+    input[type="checkbox"]{width:18px;height:18px}
+    .row{display:grid;gap:10px;margin:10px 0}
+    .row.inline{grid-template-columns:22px 1fr;align-items:center}
+    .note{border:1px dashed var(--line);background:#f9fbff;padding:10px;border-radius:12px;color:#5b6b86}
+    .table-wrap{overflow:auto}
+    table{width:100%;border-collapse:separate;border-spacing:0;min-width:880px}
+    thead th{background:linear-gradient(180deg,#e8f0ff,#dfe9ff);color:#0b2a5a;border-bottom:1px solid var(--line);position:sticky;top:0}
+    th,td{padding:12px;border-bottom:1px solid var(--line);text-align:left}
+    tbody tr:nth-child(even){background:#f7f9ff}
+    .right{text-align:right}
 
-  /* ========== FAB & Panel ========== */
-  .quickview-fab{
-    position:fixed; right:20px; bottom:24px; z-index:60;
-    display:flex; gap:10px; align-items:center;
-    background:linear-gradient(135deg,#0d47a1,#1976d2);
-    color:#fff; border:none; border-radius:999px; padding:12px 16px;
-    box-shadow:0 12px 30px rgba(3,43,108,.24), 0 6px 12px rgba(3,43,108,.18);
-    font-weight:700; letter-spacing:.2px; cursor:pointer; transition:.25s;
-  }
-  .quickview-fab:hover{ transform:translateY(-2px) }
-  .quickview-fab svg{ width:20px; height:20px }
+    /* ==== FAB & Panel ==== */
+    .quickview-fab{
+      position:fixed; right:20px; bottom:24px; z-index:60;
+      display:flex; align-items:center; gap:10px;
+      background:linear-gradient(135deg,#0d47a1,#1976d2);
+      color:#fff; border:none; border-radius:999px; padding:12px 16px;
+      box-shadow:0 12px 30px rgba(3,43,108,.24), 0 6px 12px rgba(3,43,108,.18);
+      font-weight:700; letter-spacing:.2px; cursor:pointer; transition:.25s transform;
+    }
+    .quickview-fab:hover{ transform:translateY(-2px); }
+    .quickview-fab svg{ width:20px; height:20px; opacity:.92 }
 
-  .quickview-panel{
-    position:fixed; right:20px; bottom:88px; z-index:59; width:min(480px,92vw);
-    background:#fff; border:1px solid #e7eef8; border-radius:16px;
-    box-shadow:0 20px 40px rgba(12,46,96,.18),0 8px 16px rgba(12,46,96,.12);
-    padding:14px; display:none;
-  }
-  .quickview-panel.open{ display:block; animation:panelIn .18s ease-out }
-  @keyframes panelIn{ from{transform:translateY(8px);opacity:0} to{transform:none;opacity:1} }
+    .qv-backdrop{
+      position:fixed; inset:0; background:rgba(0,0,0,.18); display:none; z-index:58;
+    }
+    .qv-backdrop.open{ display:block; }
 
-  .quickview-title{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px }
-  .quickview-title h4{ margin:0; font-weight:800; color:#0a2257 }
-  .quickview-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px }
-  @media(max-width:520px){ .quickview-grid{ grid-template-columns:1fr } }
+    .quickview-panel{
+      position:fixed; right:20px; bottom:88px; z-index:59; width:min(460px,92vw);
+      background:#ffffff; border:1px solid #e7eef8; border-radius:16px;
+      box-shadow:0 20px 40px rgba(12,46,96,.18),0 8px 16px rgba(12,46,96,.12);
+      padding:14px; display:none;
+      backdrop-filter:saturate(140%) blur(6px);
+      font-feature-settings: "tnum" 1; /* tabular numbers */
+    }
+    .quickview-panel.open{ display:block; animation:panelIn .18s ease-out }
+    @keyframes panelIn{ from{ transform:translateY(8px); opacity:.0 } to{ transform:translateY(0); opacity:1 } }
 
-  .qv-chip{
-    display:flex; align-items:center; justify-content:space-between; gap:10px;
-    padding:11px 12px; border:1px solid #e6eef8; border-radius:12px;
-    background:linear-gradient(180deg,#f9fbff,#f6f9ff);
-    color:#0d2a5a; font-weight:700; cursor:pointer;
-    box-shadow:0 1px 0 #eef3fb inset; transition:.2s transform,.25s box-shadow,.25s background;
-  }
-  .qv-chip:hover{ transform:translateY(-1px); box-shadow:0 10px 22px rgba(22,58,126,.10),0 1px 0 #eef3fb inset; background:linear-gradient(180deg,#fff,#f6faff) }
-  .qv-chip .sub{ font-size:.82rem; color:#5b7cad; background:#eaf2ff; min-width:72px; text-align:center; padding:2px 8px; border-radius:999px }
+    .quickview-title{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;}
+    .quickview-title h4{ margin:0; font-weight:800; color:#0a2257 }
+    .quickview-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    @media (max-width: 520px){ .quickview-grid{ grid-template-columns:1fr } }
 
-  /* ========== Dialog (ทุกอำเภอใช้รูปแบบเดียวกัน) ========== */
-  dialog{ border:0; border-radius:14px; padding:14px; box-shadow:0 30px 60px rgba(2,28,68,.25) }
-  .modal-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px }
-  .year-tabs{ display:flex; gap:8px }
-  .year-tabs .tab{
-    padding:6px 10px; border-radius:999px; border:1px solid #e6eef8; background:#f3f7ff; color:#0d2a5a; cursor:pointer; font-weight:700
-  }
-  .year-tabs .tab.active{ background:#0d47a1; color:#fff; border-color:#0d47a1 }
-  .month-grid{ display:grid; grid-template-columns:repeat(2,minmax(160px,1fr)); gap:8px }
-  .pill{ display:flex; justify-content:space-between; align-items:center; background:#f7fbff; border:1px solid #e6eef8; padding:8px 10px; border-radius:10px }
-</style>
+    .qv-chip{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px; padding:11px 12px; border:1px solid #e6eef8; border-radius:12px;
+      background:linear-gradient(180deg,#f9fbff,#f6f9ff);
+      color:#0d2a5a; font-weight:700; cursor:pointer;
+      box-shadow:0 1px 0 #eef3fb inset; transition:.2s transform, .25s box-shadow, .25s background;
+    }
+    .qv-chip .sub{ font-size:.82rem; color:#5b7cad; font-weight:700; background:#eaf2ff; padding:2px 8px; border-radius:999px; min-width:72px; text-align:center}
+    .qv-chip:hover{ transform:translateY(-1px); box-shadow: 0 10px 22px rgba(22,58,126,.10), 0 1px 0 #eef3fb inset; background:linear-gradient(180deg,#fefeff,#f6faff);}
+
+    dialog{border:0;border-radius:14px;box-shadow:0 30px 60px rgba(2,28,68,.25)}
+    .modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+    .month-grid{display:grid;grid-template-columns:repeat(2,minmax(160px,1fr));gap:8px}
+    .pill{display:flex;justify-content:space-between;background:#f7fbff;border:1px solid #e6eef8;padding:8px 10px;border-radius:10px}
+  </style>
 </head>
 <body>
-  <!-- ………… ส่วนหัว/ตั้งค่า/ตารางผลเดิม — คงไว้เหมือนเดิม ………… -->
+<div class="app">
+  <aside class="side" id="sidebar">
+    <div class="brand">
+      <img src="probation-logo-green.png" alt="logo">
+      <div>
+        <div style="font-weight:800;letter-spacing:.2px">คุมประพฤติ เขต 2</div>
+        <div style="font-size:12px;color:#cbd8ff">Probation Scheduler</div>
+      </div>
+    </div>
+    <div class="nav">
+      <div class="head">เมนู</div>
+      <a href="#" onclick="document.getElementById('startDate').focus()">ตั้งค่าวันเริ่ม</a>
+      <a href="#" onclick="document.getElementById('presetArea').focus()">เลือกอำเภอ</a>
+      <a href="#" onclick="alert('วิธีใช้: ตั้งวันเริ่ม เลือกช่วงห่าง เลือกอำเภอ (ถ้าต้องใช้วันล็อก) แล้วดูผลลัพธ์ 4 ครั้งใน 1 ปี')">วิธีใช้งาน</a>
+    </div>
+  </aside>
 
-  <!-- FAB -->
-  <button class="quickview-fab" id="qv-fab" title="ดูวันรายเดือน (ปี 69–70)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg>
-    ดูวันรายเดือน
-  </button>
-  <div class="quickview-panel" id="qv-panel">
-    <div class="quickview-title">
-      <h4>ดูวันรายเดือน ปี 2569–2570</h4>
-      <button class="btn" id="qv-close">ปิด</button>
+  <section class="main">
+    <header class="top">
+      <div style="display:flex;align-items:center;gap:8px">
+        <button class="hamb" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+        <h1 style="font-size:18px">Website คำนวนวันรายงานตัวผู้ถูกคุมประพฤติ จังหวัดเชียงราย เขต 2</h1>
+      </div>
+      <div class="actions">
+        <button class="btn" id="btn-copy">คัดลอก CSV</button>
+        <button class="btn" id="btn-download">ดาวน์โหลด CSV</button>
+        <button class="btn primary" id="btn-print">พิมพ์</button>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="grid">
+        <div class="card">
+          <h2>ตั้งค่าหลัก</h2>
+          <div class="row">
+            <label><span>วันที่มีคำพิพากษา</span><input type="date" id="startDate" /></label>
+          </div>
+          <div class="row">
+            <label><span>ช่วงห่าง (เดือน)</span><input type="number" id="intervalMonths" min="1" value="4"/></label>
+          </div>
+          <div class="row">
+            <label><span>พื้นที่ (ตัวเลือกวันประจำเดือน)</span>
+              <select id="presetArea">
+                <option value="">— ไม่ใช้ตัวเลือกอำเภอ —</option>
+                <option value="wiangchai-686970">เวียงชัย (รวมปี 2568–2569–2570)</option>
+                <option value="phan-686970">พาน (รวมปี 2568–2569–2570)</option>
+                <option value="wiangchiangrung-686970">เวียงเชียงรุ้ง (รวมปี 2569–2570)</option>
+                <option value="doiluang-686970">ดอยหลวง (รวมปี 2569–2570)</option>
+                <option value="maesuai-686970">แม่สรวย (รวมปี 2568–2569–2570)</option>
+                <option value="maelao-686970">แม่ลาว (รวมปี 2568–2569–2570)</option>
+                <option value="wiangpapao-686970">เวียงป่าเป้า (รวมปี 2569–2570)</option>
+                <option value="watpangae-686970">วัดป่าแงะ (รวมปี 2569–2570)</option>
+              </select>
+            </label>
+          </div>
+          <div class="row inline">
+            <input type="checkbox" id="lockDay" />
+            <label for="lockDay">ล็อกวันที่ของเดือน (เช่น ทุกครั้งวันที่ 5)</label>
+          </div>
+          <div class="row" id="lockDayWrap" style="display:none">
+            <label><span>กำหนดวันที่ (1–31)</span><input type="number" id="lockedDay" min="1" max="31" value="5"/>
+              <div class="note">*ถ้าเดือนไม่มีวันดังกล่าว จะใช้วันสุดท้ายของเดือน</div>
+            </label>
+          </div>
+          <div class="row inline">
+            <input type="checkbox" id="shiftBiz" checked />
+            <label for="shiftBiz">ถ้าตรงเสาร์-อาทิตย์/วันหยุดราชการ ให้เลื่อนไปวันทำการถัดไป</label>
+          </div>
+
+          <div class="note">
+            กติกา: ต้องได้ <b>4 ครั้งภายใน 1 ปี</b> เสมอ • ถ้าเดือนไม่พอ ระบบจะจัดรอบใหม่ให้อยู่ก่อนครบปี (เดือนไม่เกิน 11)
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>การคำนวณวันรายงานตัวผู้ถูกคุมประพฤติจังหวัดเชียงราย เขตพื้นที่ 2</h2>
+          <div class="row">
+            <label><span>จำนวนครั้งรายงานตัว</span><input type="number" id="count" min="1" max="4" value="4"/></label>
+          </div>
+          <div class="note">ระบบจะจัดให้ครบ 4 ครั้งภายใน 1 ปี โดยอาจย่นรอบและ/หรือขยับ “ครั้งที่ 4” ไม่เกินเดือนที่ 11</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <strong>ผลการคำนวณ</strong>
+          <span id="limitNote" style="color:var(--muted);font-size:12px">โซนเวลา: Asia/Bangkok</span>
+        </div>
+        <div class="table-wrap">
+          <table id="resultTable">
+            <thead><tr><th>ครั้ง</th><th>วันที่รายงานตัว (ไทย)</th><th>วันที่ (ISO)</th><th>วัน</th><th class="right">เหลืออีก (วัน)</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
     </div>
-    <div class="quickview-grid">
-      <!-- ทุกอำเภอใน FAB -->
-      <button class="qv-chip" data-open="wc"><span>เวียงชัย</span><span class="sub">ปี 69–70</span></button>
-      <button class="qv-chip" data-open="phan"><span>พาน</span><span class="sub">ปี 69–70</span></button>
-      <button class="qv-chip" data-open="wpp"><span>เวียงป่าเป้า</span><span class="sub">ปี 69–70</span></button>
-      <button class="qv-chip" data-open="wpn"><span>วัดป่าแงะ</span><span class="sub">ปี 69–70</span></button>
-      <button class="qv-chip" data-open="msr"><span>แม่สรวย</span><span class="sub">ปี 69–70</span></button>
-      <button class="qv-chip" data-open="mla"><span>แม่ลาว</span><span class="sub">ปี 69–70</span></button>
-      <button class="qv-chip" data-open="wcrdl"><span>เวียงเชียงรุ้ง / ดอยหลวง</span><span class="sub">ปี 69–70</span></button>
-    </div>
+
+    <div class="side-mask" onclick="document.getElementById('sidebar').classList.remove('open')"></div>
+  </section>
+</div>
+
+<!-- Floating Quick View -->
+<div class="qv-backdrop" id="qv-backdrop"></div>
+<button class="quickview-fab" id="qv-fab" aria-expanded="false" title="ดูวันรายเดือน (ปี 69–70)">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+    <circle cx="12" cy="12" r="10"/>
+    <path d="M8 12h8M12 8v8"/>
+  </svg> ดูวันรายเดือน
+</button>
+<div class="quickview-panel" id="qv-panel" role="dialog" aria-modal="true" aria-labelledby="qv-title">
+  <div class="quickview-title">
+    <h4 id="qv-title">ดูวันรายเดือน ปี 2569–2570</h4>
+    <button class="btn" id="qv-close" aria-label="ปิดเมนูดูวันรายเดือน">ปิด</button>
   </div>
+  <div class="quickview-grid">
+    <button class="qv-chip" id="qv-wpp"><span>เวียงป่าเป้า</span><span class="sub">ปี 69–70</span></button>
+    <button class="qv-chip" id="qv-wpn"><span>วัดป่าแงะ</span><span class="sub">ปี 69–70</span></button>
+    <button class="qv-chip" id="qv-msr"><span>แม่สรวย</span><span class="sub">ปี 69–70</span></button>
+    <button class="qv-chip" id="qv-mla"><span>แม่ลาว</span><span class="sub">ปี 69–70</span></button>
+    <button class="qv-chip" id="qv-wcrdl"><span>เวียงเชียงรุ้ง / ดอยหลวง</span><span class="sub">ปี 69–70</span></button>
 
-  <!-- ========== Dialog Template (สร้างทีละอำเภอ) ========== -->
-  <!-- เวียงชัย -->
-  <dialog id="dlg-wc">
-    <div class="modal-head">
-      <strong>วันรายเดือน เวียงชัย</strong>
-      <div class="year-tabs">
-        <button class="tab active" data-year="2026">ปี 2569</button>
-        <button class="tab" data-year="2027">ปี 2570</button>
-        <button class="btn" data-close>ปิด</button>
-      </div>
-    </div>
-    <div class="month-grid" id="grid-wc"></div>
-  </dialog>
+    <!-- เวียงชัย แยกปุ่ม ปี 69/70 -->
+    <button class="qv-chip" id="qv-wc-69"><span>เวียงชัย</span><span class="sub">ปี 69</span></button>
+    <button class="qv-chip" id="qv-wc-70"><span>เวียงชัย</span><span class="sub">ปี 70</span></button>
 
-  <!-- พาน -->
-  <dialog id="dlg-phan">
-    <div class="modal-head">
-      <strong>วันรายเดือน พาน</strong>
-      <div class="year-tabs">
-        <button class="tab active" data-year="2026">ปี 2569</button>
-        <button class="tab" data-year="2027">ปี 2570</button>
-        <button class="btn" data-close>ปิด</button>
-      </div>
-    </div>
-    <div class="month-grid" id="grid-phan"></div>
-  </dialog>
+    <!-- พาน แยกปุ่ม ปี 69/70 -->
+    <button class="qv-chip" id="qv-phan-69"><span>พาน</span><span class="sub">ปี 69</span></button>
+    <button class="qv-chip" id="qv-phan-70"><span>พาน</span><span class="sub">ปี 70</span></button>
+  </div>
+</div>
 
-  <!-- เวียงป่าเป้า -->
-  <dialog id="dlg-wpp">
-    <div class="modal-head">
-      <strong>วันรายเดือน เวียงป่าเป้า</strong>
-      <div class="year-tabs">
-        <button class="tab active" data-year="2026">ปี 2569</button>
-        <button class="tab" data-year="2027">ปี 2570</button>
-        <button class="btn" data-close>ปิด</button>
-      </div>
-    </div>
-    <div class="month-grid" id="grid-wpp"></div>
-  </dialog>
+<!-- Modals: เวียงชัย (2569/2570) + พาน (2569/2570) -->
+<dialog id="modal-2569">
+  <div class="modal-head">
+    <strong>วันรายเดือน เวียงชัย (ปี 2569)</strong>
+    <button class="btn" id="close-2569">ปิด</button>
+  </div>
+  <div class="modal-body">
+    <div class="month-grid" id="grid-2569"></div>
+    <div style="margin-top:12px;display:flex;gap:8px"><button class="btn" id="copy-2569">คัดลอกข้อความ</button></div>
+  </div>
+</dialog>
 
-  <!-- วัดป่าแงะ -->
-  <dialog id="dlg-wpn">
-    <div class="modal-head">
-      <strong>วันรายเดือน วัดป่าแงะ</strong>
-      <div class="year-tabs">
-        <button class="tab active" data-year="2026">ปี 2569</button>
-        <button class="tab" data-year="2027">ปี 2570</button>
-        <button class="btn" data-close>ปิด</button>
-      </div>
-    </div>
-    <div class="month-grid" id="grid-wpn"></div>
-  </dialog>
+<dialog id="modal-2570">
+  <div class="modal-head">
+    <strong>วันรายเดือน เวียงชัย (ปี 2570)</strong>
+    <button class="btn" id="close-2570">ปิด</button>
+  </div>
+  <div class="modal-body">
+    <div class="month-grid" id="grid-2570"></div>
+    <div style="margin-top:12px;display:flex;gap:8px"><button class="btn" id="copy-2570">คัดลอกข้อความ</button></div>
+  </div>
+</dialog>
 
-  <!-- แม่สรวย -->
-  <dialog id="dlg-msr">
-    <div class="modal-head">
-      <strong>วันรายเดือน แม่สรวย</strong>
-      <div class="year-tabs">
-        <button class="tab active" data-year="2026">ปี 2569</button>
-        <button class="tab" data-year="2027">ปี 2570</button>
-        <button class="btn" data-close>ปิด</button>
-      </div>
-    </div>
-    <div class="month-grid" id="grid-msr"></div>
-  </dialog>
+<dialog id="modal-phan-2569">
+  <div class="modal-head">
+    <strong>วันรายเดือน พาน (ปี 2569)</strong>
+    <button class="btn" id="close-phan-2569">ปิด</button>
+  </div>
+  <div class="modal-body">
+    <div class="month-grid" id="grid-phan-2569"></div>
+    <div style="margin-top:12px;display:flex;gap:8px"><button class="btn" id="copy-phan-2569">คัดลอกข้อความ</button></div>
+  </div>
+</dialog>
 
-  <!-- แม่ลาว -->
-  <dialog id="dlg-mla">
-    <div class="modal-head">
-      <strong>วันรายเดือน แม่ลาว</strong>
-      <div class="year-tabs">
-        <button class="tab active" data-year="2026">ปี 2569</button>
-        <button class="tab" data-year="2027">ปี 2570</button>
-        <button class="btn" data-close>ปิด</button>
-      </div>
-    </div>
-    <div class="month-grid" id="grid-mla"></div>
-  </dialog>
-
-  <!-- เวียงเชียงรุ้ง/ดอยหลวง (ใช้ข้อมูลเวียงเชียงรุ้ง) -->
-  <dialog id="dlg-wcrdl">
-    <div class="modal-head">
-      <strong>วันรายเดือน เวียงเชียงรุ้ง / ดอยหลวง</strong>
-      <div class="year-tabs">
-        <button class="tab active" data-year="2026">ปี 2569</button>
-        <button class="tab" data-year="2027">ปี 2570</button>
-        <button class="btn" data-close>ปิด</button>
-      </div>
-    </div>
-    <div class="month-grid" id="grid-wcrdl"></div>
-  </dialog>
+<dialog id="modal-phan-2570">
+  <div class="modal-head">
+    <strong>วันรายเดือน พาน (ปี 2570)</strong>
+    <button class="btn" id="close-phan-2570">ปิด</button>
+  </div>
+  <div class="modal-body">
+    <div class="month-grid" id="grid-phan-2570"></div>
+    <div style="margin-top:12px;display:flex;gap:8px"><button class="btn" id="copy-phan-2570">คัดลอกข้อความ</button></div>
+  </div>
+</dialog>
 
 <script>
-/* ------------------ PRESETS (คงของเดิมของคุณ) ------------------ */
-const presets = {
-  "wiangchai-686970": { years: {
-    2025:[20,17,24,28,19,23,29,25,22,27,17,22],
-    2026:[26,23,30,27,25,29,27,31,28,22,23,28],
-    2027:[25,23,22,26,25,21,26,23,27,26,22,27]
-  }},
-  "phan-686970": { years: {
-    2025:[23,20,20,18,22,19,17,21,18,16,20,18],
-    2026:[22,19,19,23,21,18,16,20,17,15,20,17],
-    2027:[21,18,22,20,17,22,19,23,21,18,23,23]
-  }},
-  "maesuai-686970": { years: {
-    2025:[21,18,18,22,20,17,15,19,16,21,18,16],
-    2026:[20,17,17,21,19,16,14,18,15,13,17,15],
-    2027:[19,16,16,20,18,15,20,17,21,19,16,21]
-  }},
-  "maelao-686970": { years: {
-    2025:[23,20,20,18,22,19,17,21,18,16,20,18],
-    2026:[13,10,10,8,12,9,7,11,8,6,10,8],
-    2027:[12,9,9,7,11,8,13,10,14,12,9,14]
-  }},
-  "wiangpapao-686970": { years: {
-    2026:[8,12,12,9,14,11,9,13,10,8,12,9],
-    2027:[14,11,11,8,13,10,15,13,16,14,11,16]
-  }},
-  "watpangae-686970": { years: {
-    2026:[29,26,26,24,28,25,23,27,24,26,26,24],
-    2027:[28,25,25,29,27,24,29,26,30,28,25,30]
-  }},
-  "wiangchiangrung-686970": { years: {
-    2026:[13,10,17,21,13,16,21,18,15,20,11,15],
-    2027:[18,15,15,19,17,14,19,16,20,18,15,20]
-  }},
-  "doiluang-686970": { years: {
-    2026:[13,10,17,21,13,16,21,18,15,20,11,15],
-    2027:[18,15,15,19,17,14,19,16,20,18,15,20]
-  }}
-};
-/* ------------------ END PRESETS ------------------ */
+  // ---------- data (lock-day presets) ----------
+  const presets = {
+    "wiangchai-686970": { years: {
+      2025:[20,17,24,28,19,23,29,25,22,27,17,22],
+      2026:[26,23,30,27,25,29,27,31,28,22,23,28],
+      2027:[25,23,22,26,25,21,26,23,27,26,22,27]
+    }},
+    "phan-686970": { years: {
+      2025:[23,20,20,18,22,19,17,21,18,16,20,18],
+      2026:[22,19,19,23,21,18,16,20,17,15,20,17],
+      2027:[21,18,22,20,17,22,19,23,21,18,23,23]
+    }},
+    "maesuai-686970": { years: {
+      2025:[21,18,18,22,20,17,15,19,16,21,18,16],
+      2026:[20,17,17,21,19,16,14,18,15,13,17,15],
+      2027:[19,16,16,20,18,15,20,17,21,19,16,21]
+    }},
+    "maelao-686970": { years: {
+      2025:[23,20,20,18,22,19,17,21,18,16,20,18],
+      2026:[13,10,10,8,12,9,7,11,8,6,10,8],
+      2027:[12,9,9,7,11,8,13,10,14,12,9,14]
+    }},
+    "wiangpapao-686970": { years: {
+      2026:[8,12,12,9,14,11,9,13,10,8,12,9],
+      2027:[14,11,11,8,13,10,15,13,16,14,11,16]
+    }},
+    "watpangae-686970": { years: {
+      2026:[29,26,26,24,28,25,23,27,24,26,26,24],
+      2027:[28,25,25,29,27,24,29,26,30,28,25,30]
+    }},
+    "wiangchiangrung-686970": { years: {
+      2026:[13,10,17,21,13,16,21,18,15,20,11,15],
+      2027:[18,15,15,19,17,14,19,16,20,18,15,20]
+    }},
+    "doiluang-686970": { years: {
+      2026:[13,10,17,21,13,16,21,18,15,20,11,15],
+      2027:[18,15,15,19,17,14,19,16,20,18,15,20]
+    }}
+  };
 
-/* ========== โค้ดส่วน FAB & Dialogs ========== */
-const fab   = document.getElementById('qv-fab');
-const panel = document.getElementById('qv-panel');
-const btnClosePanel = document.getElementById('qv-close');
+  // ---------- helpers ----------
+  const tz='Asia/Bangkok';
+  const startOfDay=d=>{const x=new Date(d);x.setHours(0,0,0,0);return x}
+  const lastDayOfMonth=(y,m)=>new Date(y,m+1,0).getDate();
+  const fmtTH=d=>new Intl.DateTimeFormat('th-TH',{dateStyle:'full',timeZone:tz}).format(d);
+  const fmtISO=d=>{const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),dd=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${dd}`};
+  const weekdayTH=d=>new Intl.DateTimeFormat('th-TH',{weekday:'long',timeZone:tz}).format(d);
+  const monthsBetween=(a,b)=>(b.getFullYear()-a.getFullYear())*12+(b.getMonth()-a.getMonth());
+  const addMonthsClamp=(date,months,desiredDay=null)=>{const y=date.getFullYear(),m=date.getMonth(),d=date.getDate();const tm=m+months,ty=y+Math.floor(tm/12),mm=((tm%12)+12)%12;const want=desiredDay??d;const max=lastDayOfMonth(ty,mm);const fd=Math.min(want,max);const out=new Date(ty,mm,fd);out.setHours(0,0,0,0);return out};
 
-fab.addEventListener('click', ()=> panel.classList.toggle('open'));
-btnClosePanel.addEventListener('click', ()=> panel.classList.remove('open'));
+  // วันหยุดไทย (อย่างกว้าง)
+  const TH_HOLIDAYS = new Set([
+    '2025-01-01','2025-02-12','2025-04-06','2025-04-07','2025-04-13','2025-04-14','2025-04-15','2025-05-01','2025-05-05','2025-06-03','2025-07-18','2025-07-19','2025-07-28','2025-08-12','2025-10-13','2025-10-23','2025-12-05','2025-12-10','2025-12-31',
+    '2026-01-01','2026-02-01','2026-04-06','2026-04-13','2026-04-14','2026-04-15','2026-05-01','2026-05-05','2026-06-03','2026-07-27','2026-07-28','2026-07-29','2026-07-30','2026-08-12','2026-10-13','2026-10-23','2026-12-05','2026-12-10','2026-12-31',
+    '2027-01-01','2027-02-20','2027-02-21','2027-04-06','2027-04-13','2027-04-14','2027-04-15','2027-05-01','2027-05-05','2027-06-03','2027-07-19','2027-07-20','2027-07-28','2027-08-12','2027-10-13','2027-10-23','2027-12-05','2027-12-10','2027-12-31'
+  ]);
+  const isWeekend=d=>d.getDay()===0||d.getDay()===6;
+  const isThaiHoliday=d=>TH_HOLIDAYS.has(fmtISO(d));
+  const isNonWorkingDay=d=>isWeekend(d)||isThaiHoliday(d);
+  const nextBusinessDay=d=>{const x=new Date(d);while(isNonWorkingDay(x)){x.setDate(x.getDate()+1)}return x};
 
-/** สร้างรายการเดือนให้กล่อง */
-function renderYearGrid(gridEl, key, year){
-  const monthsTH=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
-  const arr=(presets[key] && presets[key].years && presets[key].years[year]) ? presets[key].years[year] : [];
-  gridEl.innerHTML='';
-  monthsTH.forEach((name,i)=>{
-    const div=document.createElement('div');
-    div.className='pill';
-    div.innerHTML=`<span>${i+1}. ${name}</span><strong>${arr[i]??'-'}</strong>`;
-    gridEl.appendChild(div);
-  });
-}
+  // DOM
+  const startDateEl=document.getElementById('startDate'),
+        intervalEl=document.getElementById('intervalMonths'),
+        presetAreaEl=document.getElementById('presetArea'),
+        lockDayEl=document.getElementById('lockDay'),
+        lockedDayEl=document.getElementById('lockedDay'),
+        shiftBizEl=document.getElementById('shiftBiz'),
+        countEl=document.getElementById('count'),
+        tbody=document.querySelector('#resultTable tbody'),
+        limitNote=document.getElementById('limitNote');
 
-/** เปิด dialog แบบเลือกปีได้ */
-function attachDialog(openerAttr, dialogId, gridId, presetKeyDefault){
-  const opener = document.querySelector(`.qv-chip[data-open="${openerAttr}"]`);
-  const dlg    = document.getElementById(dialogId);
-  const grid   = document.getElementById(gridId);
-  const tabs   = dlg.querySelectorAll('.year-tabs .tab');
-  const closeBtn = dlg.querySelector('[data-close]');
-  let curYear = 2026; // default แสดงปี 2569 ก่อน
+  // ใช้เฉพาะอำเภอที่เลือก (ไม่ไหลรวม)
+  function lockedByPresetKey(presetKey, y, m){
+    const p = presets[presetKey];
+    if(!p || !p.years || !p.years[y]) return null;
+    const arr = p.years[y];
+    const d = Math.min(arr[m], lastDayOfMonth(y,m));
+    if(!d || isNaN(d)) return null;
+    const dt = new Date(y, m, d); dt.setHours(0,0,0,0); return dt;
+  }
+  function applyPreset(dateObj){
+    const key = presetAreaEl.value;
+    if(!key) return dateObj;
+    return lockedByPresetKey(key, dateObj.getFullYear(), dateObj.getMonth()) || dateObj;
+  }
 
-  function paint(){ renderYearGrid(grid, presetKeyDefault, curYear); }
-  tabs.forEach(tab=>{
-    tab.addEventListener('click', ()=>{
-      tabs.forEach(t=>t.classList.remove('active'));
-      tab.classList.add('active');
-      curYear = parseInt(tab.dataset.year,10);
-      paint();
+  // เรนเดอร์เดือนใน modal
+  function renderModal(year, key, gridEl){
+    gridEl.innerHTML='';
+    const monthsTH=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+    const arr=presets[key].years[year];
+    monthsTH.forEach((name,i)=>{
+      const div=document.createElement('div'); div.className='pill';
+      div.innerHTML=`<span>${i+1}. ${name}</span><strong>${arr[i]}</strong>`; gridEl.appendChild(div);
     });
-  });
-  opener.addEventListener('click', ()=>{ paint(); dlg.showModal(); });
-  closeBtn.addEventListener('click', ()=> dlg.close());
-}
+  }
+  function copyYear(year, key, title){
+    const short=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+    const arr=presets[key].years[year];
+    const txt=short.map((m,i)=>`${m} ${arr[i]}`).join(', ');
+    navigator.clipboard.writeText(`${title}: ${txt}`).then(()=>alert('คัดลอกแล้ว'));
+  }
 
-/* ผูกทุกอำเภอเข้ากับ dialog */
-attachDialog('wc',    'dlg-wc',    'grid-wc',    'wiangchai-686970');
-attachDialog('phan',  'dlg-phan',  'grid-phan',  'phan-686970');
-attachDialog('wpp',   'dlg-wpp',   'grid-wpp',   'wiangpapao-686970');
-attachDialog('wpn',   'dlg-wpn',   'grid-wpn',   'watpangae-686970');
-attachDialog('msr',   'dlg-msr',   'grid-msr',   'maesuai-686970');
-attachDialog('mla',   'dlg-mla',   'grid-mla',   'maelao-686970');
-attachDialog('wcrdl', 'dlg-wcrdl', 'grid-wcrdl', 'wiangchiangrung-686970'); // ใช้ชุดเดียวกับเวียงเชียงรุ้ง
+  // คำนวณตาราง
+  function toCSV(rows){
+    const header=["ครั้ง","วันที่รายงานตัว (ไทย)","วันที่ (ISO)","วัน","เหลืออีก (วัน)"];
+    const body=rows.map(r=>[r.index,r.th,r.iso,r.weekday,r.daysLeft]);
+    const all=[header,...body].map(line=>line.map(x=>(''+x).replaceAll('"','""')).map(x=>`"${x}"`).join(',')).join('\n');
+    return all;
+  }
+  function computeRows(){
+    const start=startOfDay(new Date(startDateEl.value||new Date()));
+    const gap=Math.max(1,parseInt(intervalEl.value||'4',10));
+    const count=Math.min(4,Math.max(1,parseInt(countEl.value||'4',10)));
+    const usePreset=!!presetAreaEl.value;
+    const lockedDay=(lockDayEl.checked && !usePreset) ? Math.max(1,Math.min(31,parseInt(lockedDayEl.value||'5',10))) : null;
+    const shiftBiz=shiftBizEl.checked;
+    const oneYearLimit=addMonthsClamp(start,12,null);
+    const lastAllowed=addMonthsClamp(start,11,null);
 
-/* ========== (ส่วนคำนวณ/ตารางของคุณคงเดิม — ไม่ตัดแปะซ้ำเพื่อย่อข้อความ) ========== */
+    let first;
+    if(usePreset){
+      const curLocked=applyPreset(start);
+      let base=start;
+      if(start.getTime()>curLocked.getTime()){ base=addMonthsClamp(start,1,null); }
+      first=addMonthsClamp(new Date(base.getFullYear(), base.getMonth(), 1), gap, 1);
+      first=applyPreset(first);
+    }else{
+      first=addMonthsClamp(start, gap, lockedDay);
+    }
+
+    let rows=[]; let cur=new Date(first);
+    const push=(dt)=>{ let d=new Date(dt); if(usePreset) d=applyPreset(d); else if(lockedDay!=null){ const y=d.getFullYear(),m=d.getMonth(); d=new Date(y,m,Math.min(lockedDay,lastDayOfMonth(y,m))); } if(shiftBiz) d=nextBusinessDay(d); if(d>oneYearLimit) return false; rows.push(d); return true; };
+    if(!push(cur)) rows=[];
+    while(rows.length<count){ cur=addMonthsClamp(cur, gap, lockedDay); if(!push(cur)) break; }
+
+    const okLast = rows.length===count && rows[rows.length-1] <= lastAllowed;
+    if(!okLast){
+      let targetLast = usePreset ? applyPreset(lastAllowed) : new Date(lastAllowed);
+      if(!usePreset && lockedDay!=null){ targetLast = new Date(lastAllowed.getFullYear(), lastAllowed.getMonth(), Math.min(lockedDay,lastDayOfMonth(lastAllowed.getFullYear(), lastAllowed.getMonth()))); }
+      if(shiftBiz) targetLast=nextBusinessDay(targetLast);
+
+      const earliestFirst=new Date(first);
+      const span=Math.max(0, monthsBetween(earliestFirst, targetLast));
+      let step=Math.max(1, Math.floor((span-1)/3));
+      let t1=new Date(earliestFirst);
+      let t2=addMonthsClamp(t1, step, lockedDay);
+      let t3=addMonthsClamp(t2, step, lockedDay);
+      let t4=new Date(targetLast);
+      if(usePreset){ t1=applyPreset(t1); t2=applyPreset(t2); t3=applyPreset(t3); t4=applyPreset(t4); }
+      if(shiftBiz){ t1=nextBusinessDay(t1); t2=nextBusinessDay(t2); t3=nextBusinessDay(t3); t4=nextBusinessDay(t4); }
+      rows=[t1,t2,t3,t4].filter(d=>d<=oneYearLimit);
+    }
+
+    const today=startOfDay(new Date());
+    limitNote.textContent=`จำกัดภายใน 1 ปี (ไม่เกิน ${fmtTH(oneYearLimit)})`;
+    return rows.map((d,i)=>({index:i+1, th:fmtTH(d), iso:fmtISO(d), weekday:weekdayTH(d), daysLeft:Math.ceil((d-today)/(1000*60*60*24))}));
+  }
+  function updateSchedule(){
+    const rows=computeRows();
+    tbody.innerHTML='';
+    const frag=document.createDocumentFragment();
+    rows.forEach(r=>{const tr=document.createElement('tr'); tr.innerHTML=`<td>${r.index}</td><td>${r.th}</td><td>${r.iso}</td><td>${r.weekday}</td><td class="right">${r.daysLeft}</td>`; frag.appendChild(tr)});
+    tbody.appendChild(frag);
+  }
+  function copyCSV(){ const rows=computeRows(); const csv=toCSV(rows); navigator.clipboard.writeText(csv).then(()=>alert('คัดลอก CSV แล้ว')); }
+  function downloadCSV(){ const rows=computeRows(); const csv=toCSV(rows); const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='probation-schedule-v27.csv'; a.click(); URL.revokeObjectURL(url); }
+
+  // init
+  (function init(){
+    const today=startOfDay(new Date());
+    startDateEl.value = fmtISO(today);
+    // render WC & Phan modals
+    renderModal(2026,'wiangchai-686970',document.getElementById('grid-2569'));
+    renderModal(2027,'wiangchai-686970',document.getElementById('grid-2570'));
+    renderModal(2026,'phan-686970',document.getElementById('grid-phan-2569'));
+    renderModal(2027,'phan-686970',document.getElementById('grid-phan-2570'));
+    updateSchedule();
+
+    ['input','change'].forEach(ev=>[startDateEl,intervalEl,presetAreaEl,lockDayEl,lockedDayEl,shiftBizEl,countEl].forEach(el=>el.addEventListener(ev,updateSchedule)));
+    lockDayEl.addEventListener('change',()=>{document.getElementById('lockDayWrap').style.display=lockDayEl.checked?'':'none'});
+
+    document.getElementById('btn-print').addEventListener('click',()=>window.print());
+    document.getElementById('btn-copy').addEventListener('click',copyCSV);
+    document.getElementById('btn-download').addEventListener('click',downloadCSV);
+
+    // FAB toggle & close
+    const fab  = document.getElementById('qv-fab');
+    const panel= document.getElementById('qv-panel');
+    const close= document.getElementById('qv-close');
+    const bd   = document.getElementById('qv-backdrop');
+    function openPanel(){ panel.classList.add('open'); bd.classList.add('open'); fab.setAttribute('aria-expanded','true'); }
+    function closePanel(){ panel.classList.remove('open'); bd.classList.remove('open'); fab.setAttribute('aria-expanded','false'); }
+    fab.addEventListener('click', ()=> (panel.classList.contains('open')? closePanel():openPanel()));
+    close.addEventListener('click', closePanel);
+    bd.addEventListener('click', closePanel);
+    window.addEventListener('keydown', e=>{ if(e.key==='Escape') closePanel(); });
+
+    // รายการที่เปิดเป็นหน้าต่าง 2 ปี
+    const get = k => (presets[k]||{}).years||{};
+    function openMonthTable(title, y2026, y2027){
+      const months = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+      const make = arr => '<table style="border-collapse:collapse;border:1px solid #e6eef8;border-radius:10px;overflow:hidden"><thead><tr><th style="background:#f5f9ff;padding:6px 10px;text-align:left">เดือน</th><th style="background:#f5f9ff;padding:6px 10px;text-align:center">วัน</th></tr></thead><tbody>'+arr.map((d,i)=>`<tr><td style="padding:6px 10px;border-bottom:1px solid #eef2f7">${months[i]}</td><td style="padding:6px 10px;border-bottom:1px solid #eef2f7;text-align:center">${d}</td></tr>`).join('')+'</tbody></table>';
+      const w=window.open('','_blank','width=900,height=640,scrollbars=yes');
+      w.document.write(`<title>${title}</title><div style="font:15px/1.6 Inter,system-ui;-webkit-font-smoothing:antialiased;padding:14px"><h3 style="margin-top:0">${title}</h3><div style="display:flex;gap:16px;flex-wrap:wrap"><div><div class="muted" style="margin-bottom:6px">ปี 2569</div>${make(y2026)}</div><div><div class="muted" style="margin-bottom:6px">ปี 2570</div>${make(y2027)}</div></div></div>`);
+      w.document.close();
+    }
+    document.getElementById('qv-wpp').addEventListener('click', ()=> { closePanel(); openMonthTable('เวียงป่าเป้า', get('wiangpapao-686970')[2026], get('wiangpapao-686970')[2027]); });
+    document.getElementById('qv-wpn').addEventListener('click', ()=> { closePanel(); openMonthTable('วัดป่าแงะ',   get('watpangae-686970')[2026], get('watpangae-686970')[2027]); });
+    document.getElementById('qv-msr').addEventListener('click', ()=> { closePanel(); openMonthTable('แม่สรวย',    get('maesuai-686970')[2026], get('maesuai-686970')[2027]); });
+    document.getElementById('qv-mla').addEventListener('click', ()=> { closePanel(); openMonthTable('แม่ลาว',     get('maelao-686970')[2026], get('maelao-686970')[2027]); });
+    document.getElementById('qv-wcrdl').addEventListener('click',()=> { closePanel(); openMonthTable('เวียงเชียงรุ้ง / ดอยหลวง', get('wiangchiangrung-686970')[2026], get('wiangchiangrung-686970')[2027]); });
+
+    // เวียงชัย / พาน — แยกปี 69/70 และผูกปุ่มปิด dialog
+    const modal2569 = document.getElementById('modal-2569');
+    const modal2570 = document.getElementById('modal-2570');
+    const modalPh2569 = document.getElementById('modal-phan-2569');
+    const modalPh2570 = document.getElementById('modal-phan-2570');
+
+    document.getElementById('qv-wc-69').addEventListener('click', ()=>{ closePanel(); modal2569.showModal(); });
+    document.getElementById('qv-wc-70').addEventListener('click', ()=>{ closePanel(); modal2570.showModal(); });
+    document.getElementById('qv-phan-69').addEventListener('click', ()=>{ closePanel(); modalPh2569.showModal(); });
+    document.getElementById('qv-phan-70').addEventListener('click', ()=>{ closePanel(); modalPh2570.showModal(); });
+
+    document.getElementById('close-2569').addEventListener('click', ()=> modal2569.close());
+    document.getElementById('close-2570').addEventListener('click', ()=> modal2570.close());
+    document.getElementById('close-phan-2569').addEventListener('click', ()=> modalPh2569.close());
+    document.getElementById('close-phan-2570').addEventListener('click', ()=> modalPh2570.close());
+
+    document.getElementById('copy-2569').addEventListener('click', ()=> copyYear(2026,'wiangchai-686970','เวียงชัย 2569'));
+    document.getElementById('copy-2570').addEventListener('click', ()=> copyYear(2027,'wiangchai-686970','เวียงชัย 2570'));
+    document.getElementById('copy-phan-2569').addEventListener('click', ()=> copyYear(2026,'phan-686970','พาน 2569'));
+    document.getElementById('copy-phan-2570').addEventListener('click', ()=> copyYear(2027,'phan-686970','พาน 2570'));
+  })();
 </script>
+
 </body>
 </html>
+"""
+open('/mnt/data/index-v27-fab.html','w',encoding='utf-8').write(html)
+print("Saved to /mnt/data/index-v27-fab.html")
+
