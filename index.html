@@ -609,14 +609,9 @@ html = r"""<!DOCTYPE html>
   document.getElementById('area-close').addEventListener('click',()=>modal.close());
   document.getElementById('btn-copy-area').addEventListener('click',()=>{const arr=(presets[currentKey].years||{})[currentYear]||[];const short=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];const txt=short.map((m,i)=>`${m} ${arr[i]||'-'}`).join(', ');navigator.clipboard.writeText(currentTitle+' '+(currentYear+543)+': '+txt).then(()=>alert('คัดลอกแล้ว'));});
 </script>
-
-</body>
-</html>
-
-
 </body>
 </html>
 """
-open('/mnt/data/index-v27-fab.html','w',encoding='utf-8').write(html)
+open('/mnt/data/index-v1-fab.html','w',encoding='utf-8').write(html)
 print("Saved to /mnt/data/index-v27-fab.html")
 
