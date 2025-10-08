@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Probation Scheduler | เขต 2 (v26)</title>
+  <title>Probation Scheduler | เขต 2 (v27)</title>
   <meta name="theme-color" content="#0d3c91"/>
   <link rel="icon" type="image/png" href="probation-logo.png">
   <style>
@@ -47,7 +47,7 @@
     tbody tr:nth-child(even){background:#f7f9ff}
     .right{text-align:right}
 
-    /* ==== Monthly Quickview Floating UI ==== */
+    /* ==== FAB & Panel ==== */
     .quickview-fab{
       position:fixed; right:20px; bottom:24px; z-index:60;
       display:flex; align-items:center; gap:10px;
@@ -60,7 +60,7 @@
     .quickview-fab svg{ width:20px; height:20px; opacity:.92 }
 
     .quickview-panel{
-      position:fixed; right:20px; bottom:88px; z-index:59; width:min(420px,92vw);
+      position:fixed; right:20px; bottom:88px; z-index:59; width:min(460px,92vw);
       background:#ffffff; border:1px solid #e7eef8; border-radius:16px;
       box-shadow:0 20px 40px rgba(12,46,96,.18),0 8px 16px rgba(12,46,96,.12);
       padding:14px; display:none;
@@ -185,8 +185,6 @@
             <tbody></tbody>
           </table>
         </div>
-
-        <!-- (ลบปุ่มชิปด้านล่างออกแล้ว) -->
       </div>
     </div>
 
@@ -204,7 +202,7 @@
 <div class="quickview-panel" id="qv-panel">
   <div class="quickview-title">
     <h4>ดูวันรายเดือน ปี 2569–2570</h4>
-    <button class="qv-close" id="qv-close">ปิด</button>
+    <button class="btn" id="qv-close">ปิด</button>
   </div>
   <div class="quickview-grid">
     <button class="qv-chip" id="qv-wpp"><span>เวียงป่าเป้า</span><span class="sub">ปี 69–70</span></button>
@@ -212,8 +210,14 @@
     <button class="qv-chip" id="qv-msr"><span>แม่สรวย</span><span class="sub">ปี 69–70</span></button>
     <button class="qv-chip" id="qv-mla"><span>แม่ลาว</span><span class="sub">ปี 69–70</span></button>
     <button class="qv-chip" id="qv-wcrdl"><span>เวียงเชียงรุ้ง / ดอยหลวง</span><span class="sub">ปี 69–70</span></button>
-    <button class="qv-chip" id="qv-wc"><span>เวียงชัย</span><span class="sub">ปี 69–70</span></button>
-    <button class="qv-chip" id="qv-phan"><span>พาน</span><span class="sub">ปี 69–70</span></button>
+
+    <!-- เวียงชัย แยกปุ่ม ปี 69/70 -->
+    <button class="qv-chip" id="qv-wc-69"><span>เวียงชัย</span><span class="sub">ปี 69</span></button>
+    <button class="qv-chip" id="qv-wc-70"><span>เวียงชัย</span><span class="sub">ปี 70</span></button>
+
+    <!-- พาน แยกปุ่ม ปี 69/70 -->
+    <button class="qv-chip" id="qv-phan-69"><span>พาน</span><span class="sub">ปี 69</span></button>
+    <button class="qv-chip" id="qv-phan-70"><span>พาน</span><span class="sub">ปี 70</span></button>
   </div>
 </div>
 
@@ -320,8 +324,7 @@
     '2027-01-01','2027-02-20','2027-02-21','2027-04-06','2027-04-13','2027-04-14','2027-04-15','2027-05-01','2027-05-05','2027-06-03','2027-07-19','2027-07-20','2027-07-28','2027-08-12','2027-10-13','2027-10-23','2027-12-05','2027-12-10','2027-12-31'
   ]);
   const isWeekend=d=>d.getDay()===0||d.getDay()===6;
-  const fmtISOonly=d=>fmtISO(d);
-  const isThaiHoliday=d=>TH_HOLIDAYS.has(fmtISOonly(d));
+  const isThaiHoliday=d=>TH_HOLIDAYS.has(fmtISO(d));
   const isNonWorkingDay=d=>isWeekend(d)||isThaiHoliday(d);
   const nextBusinessDay=d=>{const x=new Date(d);while(isNonWorkingDay(x)){x.setDate(x.getDate()+1)}return x};
 
@@ -431,7 +434,7 @@
     tbody.appendChild(frag);
   }
   function copyCSV(){ const rows=computeRows(); const csv=toCSV(rows); navigator.clipboard.writeText(csv).then(()=>alert('คัดลอก CSV แล้ว')); }
-  function downloadCSV(){ const rows=computeRows(); const csv=toCSV(rows); const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='probation-schedule-v26.csv'; a.click(); URL.revokeObjectURL(url); }
+  function downloadCSV(){ const rows=computeRows(); const csv=toCSV(rows); const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='probation-schedule-v27.csv'; a.click(); URL.revokeObjectURL(url); }
 
   // init
   (function init(){
@@ -451,23 +454,15 @@
     document.getElementById('btn-copy').addEventListener('click',copyCSV);
     document.getElementById('btn-download').addEventListener('click',downloadCSV);
 
-    // (เดิมมีปุ่มชิปด้านล่าง — เอาออกแล้ว)
-    // ป้องกัน error หากใครยังมีปุ่มชิปจากไฟล์อื่น
-    const safeOn=(id,fn)=>{const el=document.getElementById(id); if(el) el.addEventListener('click',fn);};
-
-    safeOn('btn-view-2569', ()=>{ presetAreaEl.value='wiangchai-686970'; updateSchedule(); document.getElementById('modal-2569').showModal(); });
-    safeOn('btn-view-2570', ()=>{ presetAreaEl.value='wiangchai-686970'; updateSchedule(); document.getElementById('modal-2570').showModal(); });
-    safeOn('btn-view-phan-2569', ()=>{ presetAreaEl.value='phan-686970'; updateSchedule(); document.getElementById('modal-phan-2569').showModal(); });
-    safeOn('btn-view-phan-2570', ()=>{ presetAreaEl.value='phan-686970'; updateSchedule(); document.getElementById('modal-phan-2570').showModal(); });
-
-    // FAB
+    // FAB toggle & close
     const fab  = document.getElementById('qv-fab');
     const panel= document.getElementById('qv-panel');
     const close= document.getElementById('qv-close');
     fab.addEventListener('click', ()=> panel.classList.toggle('open'));
     close.addEventListener('click', ()=> panel.classList.remove('open'));
 
-    // FAB chip actions
+    // รายการที่เปิดเป็นหน้าต่าง 2 ปี
+    const get = k => (presets[k]||{}).years||{};
     function openMonthTable(title, y2026, y2027){
       const months = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
       const make = arr => '<table style="border-collapse:collapse;border:1px solid #e6eef8;border-radius:10px;overflow:hidden"><thead><tr><th style="background:#f5f9ff;padding:6px 10px;text-align:left">เดือน</th><th style="background:#f5f9ff;padding:6px 10px;text-align:center">วัน</th></tr></thead><tbody>'+arr.map((d,i)=>`<tr><td style="padding:6px 10px;border-bottom:1px solid #eef2f7">${months[i]}</td><td style="padding:6px 10px;border-bottom:1px solid #eef2f7;text-align:center">${d}</td></tr>`).join('')+'</tbody></table>';
@@ -475,20 +470,35 @@
       w.document.write(`<title>${title}</title><div style="font:15px/1.6 Inter,system-ui;-webkit-font-smoothing:antialiased;padding:14px"><h3 style="margin-top:0">${title}</h3><div style="display:flex;gap:16px;flex-wrap:wrap"><div><div class="muted" style="margin-bottom:6px">ปี 2569</div>${make(y2026)}</div><div><div class="muted" style="margin-bottom:6px">ปี 2570</div>${make(y2027)}</div></div></div>`);
       w.document.close();
     }
-    const get = k => (presets[k]||{}).years||{};
     document.getElementById('qv-wpp').addEventListener('click', ()=> openMonthTable('เวียงป่าเป้า', get('wiangpapao-686970')[2026], get('wiangpapao-686970')[2027]));
     document.getElementById('qv-wpn').addEventListener('click', ()=> openMonthTable('วัดป่าแงะ',   get('watpangae-686970')[2026], get('watpangae-686970')[2027]));
     document.getElementById('qv-msr').addEventListener('click', ()=> openMonthTable('แม่สรวย',    get('maesuai-686970')[2026], get('maesuai-686970')[2027]));
     document.getElementById('qv-mla').addEventListener('click', ()=> openMonthTable('แม่ลาว',     get('maelao-686970')[2026], get('maelao-686970')[2027]));
     document.getElementById('qv-wcrdl').addEventListener('click',()=> openMonthTable('เวียงเชียงรุ้ง / ดอยหลวง', get('wiangchiangrung-686970')[2026], get('wiangchiangrung-686970')[2027]));
-    // เวียงชัย/พาน เปิด modal จาก FAB
-    document.getElementById('qv-wc').addEventListener('click',  ()=>{ presetAreaEl.value='wiangchai-686970'; updateSchedule(); document.getElementById('modal-2569').showModal(); });
-    document.getElementById('qv-phan').addEventListener('click',()=>{ presetAreaEl.value='phan-686970';       updateSchedule(); document.getElementById('modal-phan-2569').showModal(); });
+
+    // เวียงชัย / พาน — แยกปี 69/70 และผูกปุ่มปิด dialog
+    const modal2569 = document.getElementById('modal-2569');
+    const modal2570 = document.getElementById('modal-2570');
+    const modalPh2569 = document.getElementById('modal-phan-2569');
+    const modalPh2570 = document.getElementById('modal-phan-2570');
+
+    document.getElementById('qv-wc-69').addEventListener('click', ()=>{ presetAreaEl.value='wiangchai-686970'; updateSchedule(); modal2569.showModal(); });
+    document.getElementById('qv-wc-70').addEventListener('click', ()=>{ presetAreaEl.value='wiangchai-686970'; updateSchedule(); modal2570.showModal(); });
+
+    document.getElementById('qv-phan-69').addEventListener('click', ()=>{ presetAreaEl.value='phan-686970'; updateSchedule(); modalPh2569.showModal(); });
+    document.getElementById('qv-phan-70').addEventListener('click', ()=>{ presetAreaEl.value='phan-686970'; updateSchedule(); modalPh2570.showModal(); });
+
+    document.getElementById('close-2569').addEventListener('click', ()=> modal2569.close());
+    document.getElementById('close-2570').addEventListener('click', ()=> modal2570.close());
+    document.getElementById('close-phan-2569').addEventListener('click', ()=> modalPh2569.close());
+    document.getElementById('close-phan-2570').addEventListener('click', ()=> modalPh2570.close());
+
+    document.getElementById('copy-2569').addEventListener('click', ()=> copyYear(2026,'wiangchai-686970','เวียงชัย 2569'));
+    document.getElementById('copy-2570').addEventListener('click', ()=> copyYear(2027,'wiangchai-686970','เวียงชัย 2570'));
+    document.getElementById('copy-phan-2569').addEventListener('click', ()=> copyYear(2026,'phan-686970','พาน 2569'));
+    document.getElementById('copy-phan-2570').addEventListener('click', ()=> copyYear(2027,'phan-686970','พาน 2570'));
   })();
 </script>
-
-</body>
-</html>
 
 </body>
 </html>
