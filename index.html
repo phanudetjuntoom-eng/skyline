@@ -1,4 +1,4 @@
-# Write the updated HTML (based on user's provided code) to a new file
+# Save the user's combined HTML into a downloadable file
 html = r"""<!DOCTYPE html>
 <html lang="th">
 <head>
@@ -453,71 +453,4 @@ html = r"""<!DOCTYPE html>
     renderModal(2027,'wiangchai-686970',document.getElementById('grid-2570'));
     renderModal(2026,'phan-686970',document.getElementById('grid-phan-2569'));
     renderModal(2027,'phan-686970',document.getElementById('grid-phan-2570'));
-    updateSchedule();
-
-    ['input','change'].forEach(ev=>[startDateEl,intervalEl,presetAreaEl,lockDayEl,lockedDayEl,shiftBizEl,countEl].forEach(el=>el.addEventListener(ev,updateSchedule)));
-    lockDayEl.addEventListener('change',()=>{document.getElementById('lockDayWrap').style.display=lockDayEl.checked?'':''});
-
-    document.getElementById('btn-print').addEventListener('click',()=>window.print());
-    document.getElementById('btn-copy').addEventListener('click',copyCSV);
-    document.getElementById('btn-download').addEventListener('click',downloadCSV);
-
-    // FAB toggle & close
-    const fab  = document.getElementById('qv-fab');
-    const panel= document.getElementById('qv-panel');
-    const close= document.getElementById('qv-close');
-    const bd   = document.getElementById('qv-backdrop');
-    function openPanel(){ panel.classList.add('open'); bd.classList.add('open'); fab.setAttribute('aria-expanded','true'); }
-    function closePanel(){ panel.classList.remove('open'); bd.classList.remove('open'); fab.setAttribute('aria-expanded','false'); }
-    fab.addEventListener('click', ()=> (panel.classList.contains('open')? closePanel():openPanel()));
-    close.addEventListener('click', closePanel);
-    bd.addEventListener('click', closePanel);
-    window.addEventListener('keydown', e=>{ if(e.key==='Escape') closePanel(); });
-
-    // รายการที่เปิดเป็นหน้าต่าง 2 ปี
-    const get = k => (presets[k]||{}).years||{};
-    function openMonthTable(title, y2026, y2027){
-      const months = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
-      const make = arr => '<table style="border-collapse:collapse;border:1px solid #e6eef8;border-radius:10px;overflow:hidden"><thead><tr><th style="background:#f5f9ff;padding:6px 10px;text-align:left">เดือน</th><th style="background:#f5f9ff;padding:6px 10px;text-align:center">วัน</th></tr></thead><tbody>'+arr.map((d,i)=>`<tr><td style="padding:6px 10px;border-bottom:1px solid #eef2f7">${months[i]}</td><td style="padding:6px 10px;border-bottom:1px solid #eef2f7;text-align:center">${d}</td></tr>`).join('')+'</tbody></table>';
-      const w=window.open('','_blank','width=900,height=640,scrollbars=yes');
-      w.document.write(`<title>${title}</title><div style="font:15px/1.6 Inter,system-ui;-webkit-font-smoothing:antialiased;padding:14px"><h3 style="margin-top:0">${title}</h3><div style="display:flex;gap:16px;flex-wrap:wrap"><div><div class="muted" style="margin-bottom:6px">ปี 2569</div>${make(y2026)}</div><div><div class="muted" style="margin-bottom:6px">ปี 2570</div>${make(y2027)}</div></div></div>`);
-      w.document.close();
-    }
-    document.getElementById('qv-wpp').addEventListener('click', ()=> { closePanel(); openMonthTable('เวียงป่าเป้า', get('wiangpapao-686970')[2026], get('wiangpapao-686970')[2027]); });
-    document.getElementById('qv-wpn').addEventListener('click', ()=> { closePanel(); openMonthTable('วัดป่าแงะ',   get('watpangae-686970')[2026], get('watpangae-686970')[2027]); });
-    document.getElementById('qv-msr').addEventListener('click', ()=> { closePanel(); openMonthTable('แม่สรวย',    get('maesuai-686970')[2026], get('maesuai-686970')[2027]); });
-    document.getElementById('qv-mla').addEventListener('click', ()=> { closePanel(); openMonthTable('แม่ลาว',     get('maelao-686970')[2026], get('maelao-686970')[2027]); });
-    document.getElementById('qv-wcrdl').addEventListener('click',()=> { closePanel(); openMonthTable('เวียงเชียงรุ้ง / ดอยหลวง', get('wiangchiangrung-686970')[2026], get('wiangchiangrung-686970')[2027]); });
-
-    // เวียงชัย / พาน — แยกปี 69/70 และผูกปุ่มปิด dialog
-    const modal2569 = document.getElementById('modal-2569');
-    const modal2570 = document.getElementById('modal-2570');
-    const modalPh2569 = document.getElementById('modal-phan-2569');
-    const modalPh2570 = document.getElementById('modal-phan-2570');
-
-    document.getElementById('qv-wc-69').addEventListener('click', ()=>{ closePanel(); modal2569.showModal(); });
-    document.getElementById('qv-wc-70').addEventListener('click', ()=>{ closePanel(); modal2570.showModal(); });
-    document.getElementById('qv-phan-69').addEventListener('click', ()=>{ closePanel(); modalPh2569.showModal(); });
-    document.getElementById('qv-phan-70').addEventListener('click', ()=>{ closePanel(); modalPh2570.showModal(); });
-
-    document.getElementById('close-2569').addEventListener('click', ()=> modal2569.close());
-    document.getElementById('close-2570').addEventListener('click', ()=> modal2570.close());
-    document.getElementById('close-phan-2569').addEventListener('click', ()=> modalPh2569.close());
-    document.getElementById('close-phan-2570').addEventListener('click', ()=> modalPh2570.close());
-
-    document.getElementById('copy-2569').addEventListener('click', ()=> copyYear(2026,'wiangchai-686970','เวียงชัย 2569'));
-    document.getElementById('copy-2570').addEventListener('click', ()=> copyYear(2027,'wiangchai-686970','เวียงชัย 2570'));
-    document.getElementById('copy-phan-2569').addEventListener('click', ()=> copyYear(2026,'phan-686970','พาน 2569'));
-    document.getElementById('copy-phan-2570').addEventListener('click', ()=> copyYear(2027,'phan-686970','พาน 2570'));
-  })();
-</script>
-
-</body>
-</html>
-"""
-out_path = "/mnt/data/index-v27-fab.html"
-with open(out_path, "w", encoding="utf-8") as f:
-    f.write(html)
-out_path
-
-
+    updateSchedule
