@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+# Write the updated HTML (based on user's provided code) to a new file
+html = r"""<!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="utf-8" />
@@ -212,31 +213,27 @@
     <button class="btn" id="qv-close" aria-label="ปิดเมนูดูวันรายเดือน">ปิด</button>
   </div>
   <div class="quickview-grid">
-  <button class="qv-chip" data-area="wiangpapao-686970" data-name="เวียงป่าเป้า"><span>เวียงป่าเป้า</span><span class="sub">ปี 69–70</span></button>
-  <button class="qv-chip" data-area="watpangae-686970" data-name="วัดป่าแงะ"><span>วัดป่าแงะ</span><span class="sub">ปี 69–70</span></button>
-  <button class="qv-chip" data-area="maesuai-686970" data-name="แม่สรวย"><span>แม่สรวย</span><span class="sub">ปี 69–70</span></button>
-  <button class="qv-chip" data-area="maelao-686970" data-name="แม่ลาว"><span>แม่ลาว</span><span class="sub">ปี 69–70</span></button>
-  <button class="qv-chip" data-area="wiangchiangrung-686970" data-name="เวียงเชียงรุ้ง / ดอยหลวง"><span>เวียงเชียงรุ้ง / ดอยหลวง</span><span class="sub">ปี 69–70</span></button>
-  <button class="qv-chip" data-area="wiangchai-686970" data-name="เวียงชัย"><span>เวียงชัย</span><span class="sub">ปี 69–70</span></button>
-  <button class="qv-chip" data-area="phan-686970" data-name="พาน"><span>พาน</span><span class="sub">ปี 69–70</span></button>
-</div>
-<dialog id="modal-area">
-  <div class="modal-head">
-    <strong id="area-title">วันรายเดือน</strong>
-    <div style="display:flex;gap:6px;align-items:center">
-      <button class="btn" id="btn-y-2026" data-y="2026">ปี 69</button>
-      <button class="btn primary" id="btn-y-2027" data-y="2027">ปี 70</button>
-      <button class="btn" id="area-close">ปิด</button>
-    </div>
-  </div>
-  <div class="modal-body">
-    <div class="month-grid" id="area-grid"></div>
-    <div style="margin-top:12px;display:flex;gap:8px">
-      <button class="btn" id="btn-copy-area">คัดลอกข้อความ</button>
-    </div>
-  </div>
-</dialog>
+    <button class="qv-chip" id="qv-wpp"><span>เวียงป่าเป้า</span><span class="sub">ปี 69–70</span></button>
+    <button class="qv-chip" id="qv-wpn"><span>วัดป่าแงะ</span><span class="sub">ปี 69–70</span></button>
+    <button class="qv-chip" id="qv-msr"><span>แม่สรวย</span><span class="sub">ปี 69–70</span></button>
+    <button class="qv-chip" id="qv-mla"><span>แม่ลาว</span><span class="sub">ปี 69–70</span></button>
+    <button class="qv-chip" id="qv-wcrdl"><span>เวียงเชียงรุ้ง / ดอยหลวง</span><span class="sub">ปี 69–70</span></button>
 
+    <!-- เวียงชัย แยกปุ่ม ปี 69/70 -->
+    <button class="qv-chip" id="qv-wc-69"><span>เวียงชัย</span><span class="sub">ปี 69</span></button>
+    <button class="qv-chip" id="qv-wc-70"><span>เวียงชัย</span><span class="sub">ปี 70</span></button>
+
+    <!-- พาน แยกปุ่ม ปี 69/70 -->
+    <button class="qv-chip" id="qv-phan-69"><span>พาน</span><span class="sub">ปี 69</span></button>
+    <button class="qv-chip" id="qv-phan-70"><span>พาน</span><span class="sub">ปี 70</span></button>
+  </div>
+</div>
+
+<!-- Modals: เวียงชัย (2569/2570) + พาน (2569/2570) -->
+<dialog id="modal-2569">
+  <div class="modal-head">
+    <strong>วันรายเดือน เวียงชัย (ปี 2569)</strong>
+    <button class="btn" id="close-2569">ปิด</button>
   </div>
   <div class="modal-body">
     <div class="month-grid" id="grid-2569"></div>
@@ -517,4 +514,7 @@
 
 </body>
 </html>
+"""
+open('/mnt/data/index-v27-fab.html','w',encoding='utf-8').write(html)
+print("Saved to /mnt/data/index-v27-fab.html")
 
