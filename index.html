@@ -482,8 +482,8 @@
     function wireDialog(chipId, dialogId, key){
       const chip=document.getElementById(chipId);
       const dlg=document.getElementById(dialogId);
-      const gridA=document.getElementById(`grid-${dialogId.split('dlg-')[1]}-2569`);
-      const gridB=document.getElementById(`grid-${dialogId.split('dlg-')[1]}-2570`);
+      const gridA=document.getElementById(`grid-${key.replace('-686970','')}-2569`);
+      const gridB=document.getElementById(`grid-${key.replace('-686970','')}-2570`);
       chip.addEventListener('click', ()=>{
         // Render 2569 (Gregorian 2026) and 2570 (2027)
         renderYearGrid(2026,key,gridA);
