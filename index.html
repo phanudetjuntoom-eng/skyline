@@ -379,6 +379,44 @@ tbody td { padding: 13px 14px; }
 .dot-red { background: var(--red); box-shadow: 0 0 8px var(--red); }
 .dot-gold { background: var(--gold); box-shadow: 0 0 8px var(--gold); }
 
+/* Breadcrumb active section display */
+.breadcrumb {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--muted); flex-wrap: wrap;
+}
+.breadcrumb-sep { opacity: .4; }
+.breadcrumb-current {
+  display: inline-flex; align-items: center; gap: 5px;
+  color: var(--accent2); font-weight: 700; font-size: 12px;
+  background: rgba(78,127,255,.1); border: 1px solid rgba(78,127,255,.2);
+  padding: 2px 9px 2px 6px; border-radius: 999px;
+}
+.breadcrumb-current .bc-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
+  display: inline-block; animation: bc-pulse 2s infinite;
+}
+html[data-theme="light"] .breadcrumb-current { background: rgba(37,99,235,.08); border-color: rgba(37,99,235,.2); }
+@keyframes bc-pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.65)} }
+
+/* Nav item active left-bar indicator */
+.nav-item { border-left: 3px solid transparent; }
+.nav-item.active {
+  background: rgba(78,127,255,.15); color: var(--accent2);
+  border-left: 3px solid var(--accent); padding-left: 9px;
+}
+html[data-theme="light"] .nav-item.active {
+  background: rgba(255,255,255,.22); color: #fff;
+  border-left-color: rgba(255,255,255,.85);
+}
+
+/* Card flash when navigated to */
+@keyframes section-flash {
+  0%   { box-shadow: var(--shadow), 0 0 0 0 rgba(78,127,255,.0); }
+  25%  { box-shadow: var(--shadow), 0 0 0 8px rgba(78,127,255,.22); }
+  100% { box-shadow: var(--shadow), 0 0 0 0 rgba(78,127,255,.0); }
+}
+.card.section-highlight { animation: section-flash .7s ease-out; }
+
 /* Timeline */
 .timeline {
   position: relative;
@@ -513,15 +551,15 @@ dialog::backdrop { background: rgba(0,0,20,.8); backdrop-filter: blur(6px); }
     </div>
     <nav class="nav">
       <div class="nav-section">เครื่องมือ</div>
-      <button class="nav-item active" onclick="scrollToSection('setup')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      <button class="nav-item active" id="nav-setup" onclick="navigateTo('setup')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M4.93 19.07l1.41-1.41M19.07 19.07l-1.41-1.41M21 12h-2M5 12H3M12 21v-2M12 5V3"/></svg>
         ตั้งค่าการคำนวณ
       </button>
-      <button class="nav-item" onclick="scrollToSection('result')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      <button class="nav-item" id="nav-result" onclick="navigateTo('result')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
         ผลการคำนวณ
       </button>
-      <button class="nav-item" onclick="document.getElementById('qv-fab').click()">
+      <button class="nav-item" id="nav-monthly" onclick="navigateTo('monthly')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
         ดูวันรายเดือน
       </button>
@@ -564,7 +602,14 @@ dialog::backdrop { background: rgba(0,0,20,.8); backdrop-filter: blur(6px); }
         </button>
         <div>
           <div class="page-title">ระบบคำนวณวันรายงานตัว</div>
-          <div class="page-sub">จังหวัดเชียงราย เขตพื้นที่ 2</div>
+          <div class="breadcrumb">
+            <span>เชียงราย เขต 2</span>
+            <span class="breadcrumb-sep">›</span>
+            <span class="breadcrumb-current" id="breadcrumb-current">
+              <span class="bc-dot"></span>
+              <span id="breadcrumb-label">ตั้งค่าการคำนวณ</span>
+            </span>
+          </div>
         </div>
       </div>
       <div class="topbar-actions">
@@ -1076,8 +1121,97 @@ function toggleLockDay() {
   updateSchedule();
 }
 
-function scrollToSection(id) {
-  document.getElementById(id).scrollIntoView({behavior:'smooth', block:'start'});
+// ==================== NAVIGATION & ACTIVE STATE ====================
+const NAV_SECTIONS = [
+  { id: 'setup',  navId: 'nav-setup',   label: 'ตั้งค่าการคำนวณ' },
+  { id: 'result', navId: 'nav-result',  label: 'ผลการคำนวณ' },
+];
+
+function setActiveNav(sectionId) {
+  NAV_SECTIONS.forEach(s => {
+    const btn = document.getElementById(s.navId);
+    if (!btn) return;
+    btn.classList.toggle('active', s.id === sectionId);
+  });
+  const found = NAV_SECTIONS.find(s => s.id === sectionId);
+  const label = document.getElementById('breadcrumb-label');
+  if (label && found) label.textContent = found.label;
+}
+
+function navigateTo(target) {
+  if (target === 'monthly') {
+    // Open quick panel and update breadcrumb manually
+    const panel = document.getElementById('qv-panel');
+    const bd = document.getElementById('qv-backdrop');
+    panel.classList.add('open');
+    bd.classList.add('open');
+    // Set all nav inactive, highlight monthly
+    NAV_SECTIONS.forEach(s => {
+      const btn = document.getElementById(s.navId);
+      if (btn) btn.classList.remove('active');
+    });
+    const monthBtn = document.getElementById('nav-monthly');
+    if (monthBtn) monthBtn.classList.add('active');
+    const label = document.getElementById('breadcrumb-label');
+    if (label) label.textContent = 'ดูวันรายเดือน';
+    // Close sidebar on mobile
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('overlay').classList.remove('open');
+    return;
+  }
+  const el = document.getElementById(target);
+  if (!el) return;
+  // Flash highlight
+  el.classList.remove('section-highlight');
+  void el.offsetWidth; // reflow to restart animation
+  el.classList.add('section-highlight');
+  setTimeout(() => el.classList.remove('section-highlight'), 800);
+  // Smooth scroll with slight offset for sticky topbar
+  const topbar = document.querySelector('.topbar');
+  const offset = topbar ? topbar.offsetHeight + 12 : 60;
+  const top = el.getBoundingClientRect().top + window.scrollY - offset;
+  window.scrollTo({ top, behavior: 'smooth' });
+  setActiveNav(target);
+  // Close sidebar on mobile
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+}
+
+function scrollToSection(id) { navigateTo(id); }
+
+// IntersectionObserver — update active nav as user scrolls
+function initScrollSpy() {
+  const sections = NAV_SECTIONS.map(s => document.getElementById(s.id)).filter(Boolean);
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        setActiveNav(entry.target.id);
+        // Reset monthly button if scrolling in content
+        const monthBtn = document.getElementById('nav-monthly');
+        if (monthBtn) monthBtn.classList.remove('active');
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px', threshold: 0 });
+  sections.forEach(s => obs.observe(s));
+}
+
+// When quick panel closes, revert breadcrumb to last scroll position
+function closePanel() {
+  const panel = document.getElementById('qv-panel');
+  const bd = document.getElementById('qv-backdrop');
+  panel.classList.remove('open');
+  bd.classList.remove('open');
+  // Re-detect which section is visible
+  const monthBtn = document.getElementById('nav-monthly');
+  if (monthBtn) monthBtn.classList.remove('active');
+  // Find visible section
+  const sections = NAV_SECTIONS.map(s => ({ ...s, el: document.getElementById(s.id) })).filter(s => s.el);
+  const visible = sections.find(s => {
+    const r = s.el.getBoundingClientRect();
+    return r.top < window.innerHeight * 0.6 && r.bottom > 0;
+  });
+  if (visible) setActiveNav(visible.id);
+  else setActiveNav('setup');
 }
 
 // ==================== QUICK PANEL ====================
@@ -1087,17 +1221,14 @@ const bd = document.getElementById('qv-backdrop');
 
 fab.addEventListener('click', () => {
   const open = panel.classList.contains('open');
-  panel.classList.toggle('open', !open);
-  bd.classList.toggle('open', !open);
+  if (open) { closePanel(); }
+  else { navigateTo('monthly'); }
 });
 document.getElementById('qv-close').addEventListener('click', closePanel);
 bd.addEventListener('click', closePanel);
 window.addEventListener('keydown', e => { if (e.key === 'Escape') closePanel(); });
 
-function closePanel() {
-  panel.classList.remove('open');
-  bd.classList.remove('open');
-}
+// closePanel defined in NAVIGATION section above
 
 // Wire quick buttons to dialogs
 document.querySelectorAll('.qv-btn[data-dlg]').forEach(btn => {
@@ -1215,6 +1346,8 @@ function toggleTheme() {
   document.getElementById('startDate').value = fmtISO(today);
   updateSchedule();
   updateNavStats();
+
+  initScrollSpy();
 
   const inputs = ['startDate','intervalMonths','presetArea','lockedDay','shiftBiz','count'];
   inputs.forEach(id => {
