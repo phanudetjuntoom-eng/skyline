@@ -535,6 +535,57 @@ dialog::backdrop { background: rgba(0,0,20,.8); backdrop-filter: blur(6px); }
 .ring-bg { fill: none; stroke: var(--surface3); stroke-width: 6; }
 .ring-fill { fill: none; stroke: var(--green); stroke-width: 6; stroke-linecap: round; transition: stroke-dashoffset .6s ease; }
 
+/* Version badge */
+.ver-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 700; letter-spacing: .3px;
+  color: var(--green); background: rgba(52,211,153,.12);
+  border: 1px solid rgba(52,211,153,.25); padding: 2px 8px;
+  border-radius: 999px;
+}
+.ver-badge svg { opacity: .85; }
+
+/* Footer */
+.site-footer {
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  padding: 14px 20px;
+  margin-top: auto;
+}
+.footer-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap;
+  max-width: 100%;
+}
+.footer-left {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+.footer-copy {
+  font-size: 12px; color: var(--muted); line-height: 1.5;
+}
+.footer-copy strong { color: var(--ink); }
+.footer-right { display: flex; align-items: center; gap: 8px; }
+.footer-license-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 600; color: var(--muted2);
+  background: none; border: 1px solid var(--border); border-radius: 999px;
+  padding: 4px 10px; cursor: pointer; font-family: var(--sans);
+  transition: all .15s;
+}
+.footer-license-btn:hover { color: var(--accent2); border-color: var(--accent); background: rgba(78,127,255,.07); }
+html[data-theme="light"] .site-footer { background: var(--surface); }
+
+/* License dialog content */
+.license-block { display: flex; flex-direction: column; gap: 12px; }
+.license-row {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 14px; border-radius: 10px;
+  background: var(--surface2); border: 1px solid var(--border);
+}
+.lc-icon { font-size: 18px; line-height: 1.4; flex-shrink: 0; }
+.lc-title { font-size: 12px; font-weight: 700; color: var(--accent2); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 3px; }
+.lc-body { font-size: 13px; color: var(--ink); line-height: 1.7; }
+
 </style>
 </head>
 <body>
@@ -738,6 +789,28 @@ dialog::backdrop { background: rgba(0,0,20,.8); backdrop-filter: blur(6px); }
       </div>
 
     </div><!-- /content -->
+
+    <!-- Footer -->
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <div class="footer-left">
+          <span class="ver-badge">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            ver.beta 0.1
+          </span>
+          <span class="footer-copy">
+            © 2026 <strong>ภานุเดช จันทร์ตูม</strong> — สงวนลิขสิทธิ์
+          </span>
+        </div>
+        <div class="footer-right">
+          <button class="footer-license-btn" onclick="document.getElementById('dlg-license').showModal()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+            ข้อมูลลิขสิทธิ์
+          </button>
+        </div>
+      </div>
+    </footer>
+
   </div><!-- /main -->
 </div><!-- /layout -->
 
@@ -785,6 +858,67 @@ dialog::backdrop { background: rgba(0,0,20,.8); backdrop-filter: blur(6px); }
 <dialog id="dlg-wc"><div class="dlg-head"><h3>เวียงชัย — วันรายเดือน ปี 2569–2570</h3><button class="btn" onclick="this.closest('dialog').close()">ปิด ✕</button></div><div class="dlg-body"><div class="year-cols"><div class="year-block"><div class="year-label">ปี พ.ศ. 2569</div><div class="month-grid" id="grid-wc-2569"></div><button class="btn btn-primary" style="width:100%" onclick="copyYear(2026,'wiangchai-686970','เวียงชัย')">คัดลอกปี 2569</button></div><div class="year-block"><div class="year-label">ปี พ.ศ. 2570</div><div class="month-grid" id="grid-wc-2570"></div><button class="btn btn-primary" style="width:100%" onclick="copyYear(2027,'wiangchai-686970','เวียงชัย')">คัดลอกปี 2570</button></div></div></div></dialog>
 
 <dialog id="dlg-phan"><div class="dlg-head"><h3>พาน — วันรายเดือน ปี 2569–2570</h3><button class="btn" onclick="this.closest('dialog').close()">ปิด ✕</button></div><div class="dlg-body"><div class="year-cols"><div class="year-block"><div class="year-label">ปี พ.ศ. 2569</div><div class="month-grid" id="grid-phan-2569"></div><button class="btn btn-primary" style="width:100%" onclick="copyYear(2026,'phan-686970','พาน')">คัดลอกปี 2569</button></div><div class="year-block"><div class="year-label">ปี พ.ศ. 2570</div><div class="month-grid" id="grid-phan-2570"></div><button class="btn btn-primary" style="width:100%" onclick="copyYear(2027,'phan-686970','พาน')">คัดลอกปี 2570</button></div></div></div></dialog>
+
+<!-- License Dialog -->
+<dialog id="dlg-license">
+  <div class="dlg-head">
+    <h3>⚖️ ข้อมูลลิขสิทธิ์และเงื่อนไขการใช้งาน</h3>
+    <button class="btn" onclick="this.closest('dialog').close()">ปิด ✕</button>
+  </div>
+  <div class="dlg-body" style="max-width:560px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;padding:14px;background:rgba(78,127,255,.08);border:1px solid rgba(78,127,255,.2);border-radius:10px">
+      <div style="font-size:36px;line-height:1">⚖️</div>
+      <div>
+        <div style="font-weight:800;font-size:15px;color:var(--text)">Probation Scheduler</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px">ระบบคำนวณวันรายงานตัว จังหวัดเชียงราย เขตพื้นที่ 2</div>
+        <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
+          <span class="ver-badge">ver.beta 0.1</span>
+          <span style="font-size:11px;color:var(--muted);padding:2px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:999px">เผยแพร่: เมษายน 2569</span>
+        </div>
+      </div>
+    </div>
+    <div class="license-block">
+      <div class="license-row">
+        <span class="lc-icon">©</span>
+        <div>
+          <div class="lc-title">เจ้าของลิขสิทธิ์</div>
+          <div class="lc-body">ภานุเดช จันทร์ตูม — สงวนลิขสิทธิ์ © 2026</div>
+        </div>
+      </div>
+      <div class="license-row">
+        <span class="lc-icon">✅</span>
+        <div>
+          <div class="lc-title">อนุญาตให้ใช้งาน</div>
+          <div class="lc-body">ใช้งานตามวัตถุประสงค์ที่ระบุเท่านั้น ได้แก่ การคำนวณวันรายงานตัวของผู้ถูกคุมประพฤติในจังหวัดเชียงราย เขตพื้นที่ 2</div>
+        </div>
+      </div>
+      <div class="license-row">
+        <span class="lc-icon">🚫</span>
+        <div>
+          <div class="lc-title">ข้อห้าม</div>
+          <div class="lc-body">
+            <ul style="margin:4px 0 0 16px;line-height:2.1;color:var(--ink)">
+              <li>คัดลอกหรือทำซ้ำซอร์สโค้ดเพื่อวัตถุประสงค์อื่น</li>
+              <li>ดัดแปลง แก้ไข หรือสร้างงานดัดแปลง</li>
+              <li>เผยแพร่หรือแจกจ่ายในรูปแบบใดก็ตาม</li>
+              <li>นำไปอ้างเป็นผลงานของตนเองโดยไม่ได้รับอนุญาต</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="license-row">
+        <span class="lc-icon">📝</span>
+        <div>
+          <div class="lc-title">การขออนุญาต</div>
+          <div class="lc-body">ต้องได้รับอนุญาตเป็นลายลักษณ์อักษรจากเจ้าของลิขสิทธิ์ก่อนทุกกรณี</div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:14px;padding:10px 14px;background:var(--surface2);border-radius:8px;font-size:11px;color:var(--muted);text-align:center;line-height:1.8">
+      ซอร์สโค้ดและองค์ประกอบทั้งหมดของโครงการนี้ได้รับการคุ้มครองตามพระราชบัญญัติลิขสิทธิ์ พ.ศ. 2537
+    </div>
+  </div>
+</dialog>
 
 <script>
 // ==================== DATA ====================
