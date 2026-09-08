@@ -462,10 +462,15 @@ html[data-theme="light"] .nav-item.active {
   font-family: var(--sans); font-size: 13px; font-weight: 700;
   box-shadow: 0 8px 24px rgba(78,127,255,.4); cursor: pointer;
   display: flex; align-items: center; gap: 8px;
-  transition: all .2s; white-space: nowrap;
+  transition: opacity .25s ease, transform .25s ease, box-shadow .2s ease; white-space: nowrap;
 }
 .fab:hover { transform: translateY(-3px); box-shadow: 0 16px 32px rgba(78,127,255,.5); }
 .fab svg { width: 16px; height: 16px; }
+/* Step aside near the footer so it never covers the license button */
+.fab.fab-near-footer {
+  opacity: 0; transform: translateY(16px) scale(.92);
+  pointer-events: none; box-shadow: none;
+}
 
 /* Quick panel */
 .qv-backdrop { position: fixed; inset: 0; background: rgba(0,0,20,.7); backdrop-filter: blur(4px); display: none; z-index: 58; }
@@ -903,7 +908,7 @@ html[data-theme="light"] .site-footer { background: var(--surface); }
       <div style="font-size:36px;line-height:1">⚖️</div>
       <div>
         <div style="font-weight:800;font-size:15px;color:var(--text)">Probation Scheduler</div>
-        <div style="font-size:12px;color:var(--muted);margin-top:2px">ระบบคำนวณวันรายงานตัว จังหวัดเชียงราย เขตพื้นที่ 2</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px">ระบบคำนวณการรายงานตัวคุมประพฤติ</div>
         <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
           <span class="ver-badge">ver.beta 0.1</span>
           <span style="font-size:11px;color:var(--muted);padding:2px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:999px">เผยแพร่: เมษายน 2569</span>
@@ -922,7 +927,7 @@ html[data-theme="light"] .site-footer { background: var(--surface); }
         <span class="lc-icon">✅</span>
         <div>
           <div class="lc-title">อนุญาตให้ใช้งาน</div>
-          <div class="lc-body">ใช้งานตามวัตถุประสงค์ที่ระบุเท่านั้น ได้แก่ การคำนวณวันรายงานตัวของผู้ถูกคุมประพฤติในจังหวัดเชียงราย เขตพื้นที่ 2</div>
+          <div class="lc-body">สำหรับใช้ในการคำนวณการรายงานตัวและตรวจสอบวันรายงานตัวของผู้ถูกคุมประพฤติ</div>
         </div>
       </div>
       <div class="license-row">
@@ -1388,6 +1393,26 @@ function initScrollSpy() {
   sections.forEach(s => obs.observe(s));
 }
 
+// FAB steps aside once the footer (with the license button) comes into view,
+// so the floating button never sits on top of it. Reappears once scrolled back up.
+function initFooterFabGuard() {
+  const footer = document.querySelector('.site-footer');
+  const fab = document.getElementById('qv-fab');
+  if (!footer || !fab) return;
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const nearFooter = entry.isIntersecting;
+      fab.classList.toggle('fab-near-footer', nearFooter);
+      if (nearFooter) {
+        // Close the monthly panel too, in case it was open, so nothing overlaps the footer
+        const panel = document.getElementById('qv-panel');
+        if (panel && panel.classList.contains('open')) closePanel();
+      }
+    });
+  }, { rootMargin: '0px 0px -10px 0px', threshold: 0 });
+  obs.observe(footer);
+}
+
 // When quick panel closes, revert breadcrumb to last scroll position
 function closePanel() {
   const panel = document.getElementById('qv-panel');
@@ -1541,6 +1566,7 @@ function toggleTheme() {
   updateNavStats();
 
   initScrollSpy();
+  initFooterFabGuard();
 
   const inputs = ['startDate','intervalMonths','presetArea','lockedDay','shiftBiz','count'];
   inputs.forEach(id => {
